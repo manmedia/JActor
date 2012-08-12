@@ -111,10 +111,10 @@ final public class JAFuture {
      * @throws Exception Any uncaught exceptions raised while processing the request.
      */
     public Object send(final Actor actor,
-                       final Request request)
+                       final Request<?, ?> request)
             throws Exception {
         done = new Semaphore(0);
-        actor.acceptRequest(requestSource, request, new RP() {
+        actor.acceptRequest(requestSource, request, new RP<Object>() {
             @Override
             public void processResponse(Object response) throws Exception {
                 result = response;

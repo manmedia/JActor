@@ -34,123 +34,123 @@ import org.agilewiki.jactor.lpc.RequestSource;
 /**
  * Requests sent to a JAPCMailbox are wrapped by an JARequest.
  */
-public abstract class JARequest extends RP implements JAMessage {
+public abstract class JARequest extends RP<Object> implements JAMessage {
 
-    public Mailbox mailbox;
+	public Mailbox mailbox;
 
-    /**
-     * The target of the response.
-     * An anonymous object in the JLPCActor or JLPCFuture
-     * that originated the request. Used in response processing.
-     */
-    protected APCRequestSource requestSource;
+	/**
+	 * The target of the response. An anonymous object in the JLPCActor or
+	 * JLPCFuture that originated the request. Used in response processing.
+	 */
+	protected APCRequestSource requestSource;
 
-    /**
-     * An anonymous object in the JLPCActor that is the target of the JARequest.
-     */
-    private JLPCActor destinationActor;
+	/**
+	 * An anonymous object in the JLPCActor that is the target of the JARequest.
+	 */
+	private JLPCActor destinationActor;
 
-    /**
-     * The unwrapped request that was sent to a JLPCActor.
-     */
-    private Request unwrappedRequest;
+	/**
+	 * The unwrapped request that was sent to a JLPCActor.
+	 */
+	private Request<?, ?> unwrappedRequest;
 
-    /**
-     * Initially true, active is set to false when a response is sent.
-     * Used to prevent multiple responses to a request.
-     */
-    private boolean active = true;
+	/**
+	 * Initially true, active is set to false when a response is sent. Used to
+	 * prevent multiple responses to a request.
+	 */
+	private boolean active = true;
 
-    public Mailbox sourceMailbox;
+	public Mailbox sourceMailbox;
 
-    public JARequest sourceRequest;
+	public JARequest sourceRequest;
 
-    public ExceptionHandler sourceExceptionHandler;
+	public ExceptionHandler sourceExceptionHandler;
 
-    public RP rp;
+	public RP<Object> rp;
 
-    protected final void reset() {
-        mailbox = null;
-        requestSource = null;
-        destinationActor = null;
-        unwrappedRequest = null;
-        sourceMailbox = null;
-        sourceRequest = null;
-        sourceExceptionHandler = null;
-        rp = null;
-    }
+	protected final void reset() {
+		mailbox = null;
+		requestSource = null;
+		destinationActor = null;
+		unwrappedRequest = null;
+		sourceMailbox = null;
+		sourceRequest = null;
+		sourceExceptionHandler = null;
+		rp = null;
+	}
 
-    public JARequest(RequestSource requestSource,
-                     JLPCActor destinationActor,
-                     Request unwrappedRequest,
-                     RP rp,
-                     Mailbox mailbox) {
-        this.mailbox = mailbox;
-        this.requestSource = requestSource;
-        this.destinationActor = destinationActor;
-        this.unwrappedRequest = unwrappedRequest;
-        this.rp = rp;
-        sourceMailbox = requestSource.getMailbox();
-        if (sourceMailbox != null) {
-            sourceRequest = sourceMailbox.getCurrentRequest();
-            sourceExceptionHandler = sourceMailbox.getExceptionHandler();
-        } else {
-            sourceRequest = null;
-            sourceExceptionHandler = null;
-        }
-    }
+	public JARequest(RequestSource requestSource, JLPCActor destinationActor,
+			Request<?, ?> unwrappedRequest, RP<Object> rp, Mailbox mailbox) {
+		this.mailbox = mailbox;
+		this.requestSource = requestSource;
+		this.destinationActor = destinationActor;
+		this.unwrappedRequest = unwrappedRequest;
+		this.rp = rp;
+		sourceMailbox = requestSource.getMailbox();
+		if (sourceMailbox != null) {
+			sourceRequest = sourceMailbox.getCurrentRequest();
+			sourceExceptionHandler = sourceMailbox.getExceptionHandler();
+		} else {
+			sourceRequest = null;
+			sourceExceptionHandler = null;
+		}
+	}
 
-    /**
-     * Returns the requestProcessor.
-     *
-     * @return The requestProcessor.
-     */
-    final public JLPCActor getDestinationActor() {
-        return destinationActor;
-    }
+	/**
+	 * Returns the requestProcessor.
+	 * 
+	 * @return The requestProcessor.
+	 */
+	final public JLPCActor getDestinationActor() {
+		return destinationActor;
+	}
 
-    /**
-     * Returns the unwrapped request.
-     *
-     * @return The unwrapped request.
-     */
-    final public Request getUnwrappedRequest() {
-        return unwrappedRequest;
-    }
+	/**
+	 * Returns the unwrapped request.
+	 * 
+	 * @return The unwrapped request.
+	 */
+	final public Request<?,?> getUnwrappedRequest() {
+		return unwrappedRequest;
+	}
 
-    /**
-     * Returns true if no response has been returned.
-     *
-     * @return Is true when no response has been returned.
-     */
-    final public boolean isActive() {
-        return active;
-    }
+	/**
+	 * Returns true if no response has been returned.
+	 * 
+	 * @return Is true when no response has been returned.
+	 */
+	final public boolean isActive() {
+		return active;
+	}
 
-    /**
-     * Sets active to false--a response has been returned.
-     */
-    final public void inactive() {
-        active = false;
-        mailbox.setCurrentRequest(null);
-    }
+	/**
+	 * Sets active to false--a response has been returned.
+	 */
+	final public void inactive() {
+		active = false;
+		mailbox.setCurrentRequest(null);
+	}
 
-    /**
-     * Enqueue a response to be sent when there are no more incoming messages to be processed.
-     *
-     * @param eventQueue        The internal queue used by JLPCMailbox.
-     * @param unwrappedResponse The unwrapped response.
-     */
-    final public void response(BufferedEventsQueue<JAMessage> eventQueue, Object unwrappedResponse) {
-        JAResponse japcResponse = new JAResponse(unwrappedResponse);
-        japcResponse.setJAPCRequest(this);
-        requestSource.responseFrom(eventQueue, japcResponse);
-    }
+	/**
+	 * Enqueue a response to be sent when there are no more incoming messages to
+	 * be processed.
+	 * 
+	 * @param eventQueue
+	 *            The internal queue used by JLPCMailbox.
+	 * @param unwrappedResponse
+	 *            The unwrapped response.
+	 */
+	final public void response(BufferedEventsQueue<JAMessage> eventQueue,
+			Object unwrappedResponse) {
+		JAResponse japcResponse = new JAResponse(unwrappedResponse);
+		japcResponse.setJAPCRequest(this);
+		requestSource.responseFrom(eventQueue, japcResponse);
+	}
 
-    public void restoreSourceMailbox() {
-        if (sourceMailbox != null) {
-            sourceMailbox.setCurrentRequest(sourceRequest);
-            sourceMailbox.setExceptionHandler(sourceExceptionHandler);
-        }
-    }
+	public void restoreSourceMailbox() {
+		if (sourceMailbox != null) {
+			sourceMailbox.setCurrentRequest(sourceRequest);
+			sourceMailbox.setExceptionHandler(sourceExceptionHandler);
+		}
+	}
 }

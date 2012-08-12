@@ -26,7 +26,7 @@ package org.agilewiki.jactor;
 /**
  * Used with on-way messages (Events) to signal that no response is required.
  */
-final public class JANoResponse extends RP {
+final public class JANoResponse extends RP<Object> {
     /**
      * An immutable instance of JANoResponse.
      */

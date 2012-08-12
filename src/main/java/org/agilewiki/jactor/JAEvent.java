@@ -35,54 +35,58 @@ import java.util.ArrayList;
 
 /**
  * <p>
- * Used to send a request to an actor without having to wait for a response.
- * Any responses or exceptions from processing the request are discarded.
+ * Used to send a request to an actor without having to wait for a response. Any
+ * responses or exceptions from processing the request are discarded.
  * </p>
  */
 public class JAEvent {
-    /**
-     * Serves as the originator of a request.
-     */
-    public static RequestSource requestSource = new RequestSource() {
-        @Override
-        final public Mailbox getMailbox() {
-            return null;
-        }
+	/**
+	 * Serves as the originator of a request.
+	 */
+	public static RequestSource requestSource = new RequestSource() {
+		@Override
+		final public Mailbox getMailbox() {
+			return null;
+		}
 
-        @Override
-        public ExceptionHandler getExceptionHandler() {
-            return null;
-        }
+		@Override
+		public ExceptionHandler getExceptionHandler() {
+			return null;
+		}
 
-        @Override
-        public void setExceptionHandler(ExceptionHandler exceptionHandler) {
-            throw new UnsupportedOperationException();
-        }
+		@Override
+		public void setExceptionHandler(ExceptionHandler exceptionHandler) {
+			throw new UnsupportedOperationException();
+		}
 
-        @Override
-        final public void responseFrom(final BufferedEventsQueue<JAMessage> eventQueue,
-                                       final JAResponse japcResponse) {
-            throw new UnsupportedOperationException();
-        }
+		@Override
+		final public void responseFrom(
+				final BufferedEventsQueue<JAMessage> eventQueue,
+				final JAResponse japcResponse) {
+			throw new UnsupportedOperationException();
+		}
 
-        @Override
-        final public void send(final BufferedEventsDestination<JAMessage> destination,
-                               final JARequest japcRequest) {
-            final ArrayList<JAMessage> bufferedEvents = new ArrayList<JAMessage>(1);
-            bufferedEvents.add(japcRequest);
-            destination.putBufferedEvents(bufferedEvents);
-        }
-    };
+		@Override
+		final public void send(
+				final BufferedEventsDestination<JAMessage> destination,
+				final JARequest japcRequest) {
+			final ArrayList<JAMessage> bufferedEvents = new ArrayList<JAMessage>(
+					1);
+			bufferedEvents.add(japcRequest);
+			destination.putBufferedEvents(bufferedEvents);
+		}
+	};
 
-    /**
-     * Sends a request without having to wait for a response.
-     *
-     * @param actor   The target actor.
-     * @param request The request.
-     */
-    public void sendEvent(final Actor actor,
-                          final Request request)
-            throws Exception {
-        actor.acceptRequest(requestSource, request, JANoResponse.nrp);
-    }
+	/**
+	 * Sends a request without having to wait for a response.
+	 * 
+	 * @param actor
+	 *            The target actor.
+	 * @param request
+	 *            The request.
+	 */
+	public void sendEvent(final Actor actor, final Request<?, ?> request)
+			throws Exception {
+		actor.acceptRequest(requestSource, request, JANoResponse.nrp);
+	}
 }

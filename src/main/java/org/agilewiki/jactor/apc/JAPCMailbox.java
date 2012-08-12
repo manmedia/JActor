@@ -23,6 +23,8 @@
  */
 package org.agilewiki.jactor.apc;
 
+import java.util.ArrayList;
+
 import org.agilewiki.jactor.ExceptionHandler;
 import org.agilewiki.jactor.bufferedEvents.BufferedEventsDestination;
 import org.agilewiki.jactor.bufferedEvents.BufferedEventsQueue;
@@ -30,9 +32,6 @@ import org.agilewiki.jactor.bufferedEvents.JABufferedEventsQueue;
 import org.agilewiki.jactor.concurrent.ThreadManager;
 import org.agilewiki.jactor.events.EventProcessor;
 import org.agilewiki.jactor.events.EventQueue;
-
-
-import java.util.ArrayList;
 
 /**
  * An implementation of APCMailbox.
@@ -93,7 +92,7 @@ public class JAPCMailbox implements APCMailbox {
                         if (response instanceof Exception) {
                             processException(jaRequest.sourceRequest, (Exception) response);
                         } else try {
-                            jaRequest.rp.processResponse(response);
+                           jaRequest.rp.processResponse(response);
                         } catch (Exception ex) {
                             processException(jaRequest.sourceRequest, ex);
                         }
